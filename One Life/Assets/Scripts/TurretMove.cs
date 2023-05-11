@@ -10,36 +10,18 @@ public class TurretMove : MonoBehaviour
  
 [Tooltip("If isInstant == true, then rotationalSpeed == Infinity")]  
 [SerializeField] bool isInstant = false;
-Camera _camera = null;  // cached because Camera.main is slow, so we only call it once.
+public Camera _camera;
  
     void Start()
     {
-         _camera = Camera.main;
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
     }
  
     void Update()
     {
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-        // Copy the ray's direction
-        //Vector3 mouseDirection = ray.direction;
-        // Constraint it to stay in the X/Z plane
-        //mouseDirection.y = 0;
-        //Look for the constraint direction
         Quaternion targetRotation = Quaternion.LookRotation(ray.direction);
-
- 
-        if (isInstant)
-        {
-            transform.rotation = targetRotation;
-        }
-        else
-        {
-            Quaternion currentRotation = transform.rotation;
-            float angularDifference = Quaternion.Angle(currentRotation, targetRotation);
- 
-            // will always be positive (or zero)
-            if (angularDifference > 0) transform.rotation = Quaternion.Slerp(currentRotation,targetRotation,(rotationSpeed * 180 * Time.deltaTime) / angularDifference);
-            else transform.rotation = targetRotation;
-        }
+        transform.rotation = targetRotation;
     }
 }
